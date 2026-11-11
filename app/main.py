@@ -1,15 +1,15 @@
-"""FastAPI application for LLM prompt security checks."""
+"""FastAPI application with NeMo input-rail enforcement."""
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from app.security_gateway import evaluate_prompt
+from app.nemo_runtime import evaluate_with_nemo
 
 
 app = FastAPI(
     title="LLM Guardrails Security API",
-    description="Prompt validation and baseline injection detection.",
-    version="0.1.0",
+    description="Prompt security evaluation using NeMo Guardrails.",
+    version="0.2.0",
 )
 
 
@@ -31,6 +31,6 @@ def health_check():
 
 
 @app.post("/v1/security/evaluate", response_model=SecurityDecision)
-def evaluate_security(request: PromptRequest):
-    """Evaluate a prompt before it reaches an LLM."""
-    return evaluate_prompt(request.prompt)
+async def evaluate_security(request: PromptRequest):
+    """Enforce NeMo input rails before returning a decision."""
+    return await evaluate_with_nemo(request.prompt)
