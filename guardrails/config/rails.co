@@ -1,5 +1,5 @@
 define flow check prompt security
-  $allowed = execute check_prompt_security
+  $allowed = execute check_prompt_security(prompt=$user_message)
 
   if not $allowed
     bot refuse security request

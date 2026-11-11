@@ -1,19 +1,15 @@
 """Custom security actions for NeMo Guardrails."""
 
 from nemoguardrails.actions import action
-
 from app.security_gateway import evaluate_prompt
 
 
 @action(name="check_prompt_security")
-async def check_prompt_security(context: dict) -> bool:
-    """Evaluate the latest user message against security controls."""
+async def check_prompt_security(prompt: str = None) -> bool:
+    """Evaluate a user prompt before LLM processing."""
 
-    user_message = context.get("last_user_message")
-
-    if not isinstance(user_message, str):
+    if not isinstance(prompt, str):
         return False
 
-    result = evaluate_prompt(user_message)
-
+    result = evaluate_prompt(prompt)
     return result["allowed"]
