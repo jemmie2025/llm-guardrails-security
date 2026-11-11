@@ -1,11 +1,12 @@
-"""Security gateway combining input validation and injection detection."""
+"""Security gateway combining multiple prompt security controls."""
 
 from app.security import validate_prompt
 from app.injection_detector import detect_injection
+from app.advanced_detection import detect_advanced_injection
 
 
 def evaluate_prompt(prompt: str) -> dict:
-    """Evaluate a prompt against the configured security controls."""
+    """Apply validation and layered prompt injection checks."""
 
     validation = validate_prompt(prompt)
 
@@ -17,14 +18,24 @@ def evaluate_prompt(prompt: str) -> dict:
             "reason": validation["reason"],
         }
 
-    detection = detect_injection(prompt)
+    basic_detection = detect_injection(prompt)
 
-    if detection["detected"]:
+    if basic_detection["detected"]:
         return {
             "allowed": False,
             "status": "blocked",
-            "category": detection["category"],
-            "reason": detection["reason"],
+            "category": basic_detection["category"],
+            "reason": basic_detection["reason"],
+        }
+
+    advanced_detection = detect_advanced_injection(prompt)
+
+    if advanced_detection["detected"]:
+        return {
+            "allowed": False,
+            "status": "blocked",
+            "category": advanced_detection["category"],
+            "reason": "Matched an advanced injection detection rule",
         }
 
     return {
