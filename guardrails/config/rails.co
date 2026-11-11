@@ -1,0 +1,9 @@
+define flow check prompt security
+  $allowed = execute check_prompt_security
+
+  if not $allowed
+    bot refuse security request
+    stop
+
+define bot refuse security request
+  "I cannot process this request because it violates the configured security policy."
