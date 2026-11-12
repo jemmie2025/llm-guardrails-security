@@ -40,9 +40,8 @@ Python Security Gateway
   v
 RailStatus.PASSED / RailStatus.BLOCKED
 
-NeMo enforcement has been validated independently through
-integration tests. FastAPI does not yet invoke LLMRails
-for every API request.
+FastAPI invokes LLMRails.check_async() for security evaluation.
+NeMo input-rail enforcement is verified through API integration tests.
 
 ## 4. Core Components
 
@@ -79,7 +78,6 @@ Verified:
 - GitHub Actions execution
 
 Not yet verified:
-- Docker runtime
 - End-to-end LLM inference
 - Model-output filtering
 - External tool authorization
