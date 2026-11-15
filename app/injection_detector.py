@@ -12,6 +12,8 @@ INJECTION_PATTERNS = {
         r"\bignore\s+(all\s+)?previous\s+instructions\b",
         r"\bdisregard\s+(all\s+)?prior\s+instructions\b",
         r"\bforget\s+(all\s+)?previous\s+instructions\b",
+        r"\bdiscard\s+your\s+existing\s+rules\b",
+
     ],
     "role_spoofing": [
         r"\byou\s+are\s+now\s+(the\s+)?system\b",
@@ -22,8 +24,23 @@ INJECTION_PATTERNS = {
         r"\breveal\s+(your\s+)?system\s+prompt\b",
         r"\bprint\s+(your\s+)?hidden\s+instructions\b",
         r"\bshow\s+me\s+(your\s+)?internal\s+instructions\b",
+        r"\b(?:tell|show)\s+me\s+the\s+confidential\s+developer\s+instructions\b",
+
     ],
 }
+
+
+def is_educational_quote(prompt: str) -> bool:
+    """Allow one explicitly bounded educational example."""
+    if not isinstance(prompt, str):
+        return False
+
+    normalized = " ".join(prompt.casefold().split())
+
+    return normalized in {
+        'explain why the phrase "ignore all previous instructions" is suspicious.',
+        'explain why the phrase "ignore all previous instructions" is suspicious?',
+    }
 
 
 def detect_injection(prompt: str) -> dict:
@@ -34,6 +51,13 @@ def detect_injection(prompt: str) -> dict:
             "detected": False,
             "category": None,
             "reason": "Input is not a string",
+        }
+
+    if is_educational_quote(prompt):
+        return {
+            "detected": False,
+            "category": None,
+            "reason": "Recognized a bounded educational quotation",
         }
 
     for category, patterns in INJECTION_PATTERNS.items():

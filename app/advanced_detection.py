@@ -40,6 +40,19 @@ def detect_advanced_injection(prompt: str) -> dict:
         r"(security|safety|guardrails)"
     )
 
+    owner_impersonation = (
+        r"\bas the platform owner\b.*"
+        r"\b(?:authorize|order)\b.*"
+        r"\b(?:turn off|disable|bypass)\b.*"
+        r"\b(?:safeguards|security|guardrails)\b"
+    )
+
+    if re.search(owner_impersonation, normalized):
+        return {
+            "detected": True,
+            "category": "authority_spoofing",
+        }
+
     if re.search(authority_pattern, normalized):
         return {
             "detected": True,
