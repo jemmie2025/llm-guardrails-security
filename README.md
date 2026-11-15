@@ -137,6 +137,20 @@ The expected response contains `"allowed": false` and `"status": "blocked"`. The
 
 **Security note:** The Docker instructions expose the service on **localhost only** for demonstration. A real public deployment requires HTTPS termination, secured secrets, controlled exposure of internal endpoints, production Redis, operational monitoring, and additional deployment-specific verification. Those live-host controls are not claimed as completed.
 
+## Screenshots and Test Evidence
+
+### Automated Security Tests
+
+![Automated Security Tests](evidence/screenshots/01-automated-security-tests.png)
+
+### Input Validation Tests
+
+![Input Validation Tests](evidence/screenshots/01-input-validation-pytest.png)
+
+### Red-Team Before and After
+
+![Red-Team Before and After](evidence/screenshots/02-red-team-before-after.png)
+
 ## Reports and evidence
 
 - [Research report — NeMo Guardrails, Llama Guard 4, and Rebuff](docs/research-report.md)
