@@ -1,0 +1,68 @@
+{
+  "evaluation": "post_remediation_regression",
+  "previously_examined_cases": true,
+  "passed": 10,
+  "total": 10,
+  "results": [
+    {
+      "id": "F01",
+      "expected_allowed": false,
+      "actual_allowed": false,
+      "correct": true
+    },
+    {
+      "id": "F02",
+      "expected_allowed": false,
+      "actual_allowed": false,
+      "correct": true
+    },
+    {
+      "id": "F03",
+      "expected_allowed": false,
+      "actual_allowed": false,
+      "correct": true
+    },
+    {
+      "id": "F04",
+      "expected_allowed": false,
+      "actual_allowed": false,
+      "correct": true
+    },
+    {
+      "id": "F05",
+      "expected_allowed": false,
+      "actual_allowed": false,
+      "correct": true
+    },
+    {
+      "id": "F06",
+      "expected_allowed": true,
+      "actual_allowed": true,
+      "correct": true
+    },
+    {
+      "id": "F07",
+      "expected_allowed": true,
+      "actual_allowed": true,
+      "correct": true
+    },
+    {
+      "id": "F08",
+      "expected_allowed": true,
+      "actual_allowed": true,
+      "correct": true
+    },
+    {
+      "id": "F09",
+      "expected_allowed": true,
+      "actual_allowed": true,
+      "correct": true
+    },
+    {
+      "id": "F10",
+      "expected_allowed": true,
+      "actual_allowed": true,
+      "correct": true
+    }
+  ]
+}

@@ -1,13 +1,14 @@
-"""Security gateway combining multiple prompt security controls."""
+"""Layered security gateway with NeMo-compatible decisions."""
 
 from app.security import validate_prompt
 from app.injection_detector import detect_injection
 from app.advanced_detection import detect_advanced_injection
+from app.contextual_detection import detect_contextual_injection
+from app.intent_policy import detect_intent, screening_text
 
 
 def evaluate_prompt(prompt: str) -> dict:
-    """Apply validation and layered prompt injection checks."""
-
+    """Validate input and enforce all configured detection layers."""
     validation = validate_prompt(prompt)
 
     if not validation["allowed"]:
@@ -18,25 +19,26 @@ def evaluate_prompt(prompt: str) -> dict:
             "reason": validation["reason"],
         }
 
-    basic_detection = detect_injection(prompt)
+    screened = screening_text(prompt)
 
-    if basic_detection["detected"]:
-        return {
-            "allowed": False,
-            "status": "blocked",
-            "category": basic_detection["category"],
-            "reason": basic_detection["reason"],
-        }
+    detectors = (
+        detect_injection,
+        detect_advanced_injection,
+        detect_contextual_injection,
+        detect_intent,
+    )
 
-    advanced_detection = detect_advanced_injection(prompt)
+    for detector in detectors:
+        decision = detector(screened)
 
-    if advanced_detection["detected"]:
-        return {
-            "allowed": False,
-            "status": "blocked",
-            "category": advanced_detection["category"],
-            "reason": "Matched an advanced injection detection rule",
-        }
+        if decision["detected"]:
+            return {
+                "allowed": False,
+                "status": "blocked",
+                "category": decision["category"],
+                "reason": decision.get("reason")
+                or "Matched a configured security rule",
+            }
 
     return {
         "allowed": True,
