@@ -4,8 +4,10 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
+AUTH_HEADERS = {"Authorization": "Bearer test-token-" + "x" * 48}
 
-client = TestClient(app)
+
+client = TestClient(app, headers=AUTH_HEADERS)
 
 
 def test_health():

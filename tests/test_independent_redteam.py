@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
+AUTH_HEADERS = {"Authorization": "Bearer test-token-" + "x" * 48}
+
 
 CASES = [
     (
@@ -51,7 +53,7 @@ CASES = [
 def test_independent_security_challenge(
     name, prompt, expected_allowed
 ):
-    with TestClient(app) as client:
+    with TestClient(app, headers=AUTH_HEADERS) as client:
         response = client.post(
             "/v1/security/evaluate",
             json={"prompt": prompt},

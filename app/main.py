@@ -1,8 +1,9 @@
 """FastAPI application with NeMo input-rail enforcement."""
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field
 
+from app.auth import require_api_token
 from app.nemo_runtime import evaluate_with_nemo
 
 
@@ -30,7 +31,7 @@ def health_check():
     return {"status": "healthy"}
 
 
-@app.post("/v1/security/evaluate", response_model=SecurityDecision)
+@app.post("/v1/security/evaluate", response_model=SecurityDecision, dependencies=[Depends(require_api_token)])
 async def evaluate_security(request: PromptRequest):
     """Enforce NeMo input rails before returning a decision."""
     return await evaluate_with_nemo(request.prompt)

@@ -74,9 +74,13 @@ jobs:
       - name: Build security API image
         run: docker build -t llm-guardrails-security:ci .
 
-      - name: Start container
+      - name: Start container with temporary authentication token
         run: |
+          export GUARDRAILS_API_TOKEN="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+          echo "::add-mask::$GUARDRAILS_API_TOKEN"
+          echo "GUARDRAILS_API_TOKEN=$GUARDRAILS_API_TOKEN" >> "$GITHUB_ENV"
           docker run -d --name guardrails-ci \
+            -e GUARDRAILS_API_TOKEN \
             -p 127.0.0.1:8001:8000 \
             llm-guardrails-security:ci
 

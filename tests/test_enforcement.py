@@ -8,6 +8,8 @@ from nemoguardrails.rails.llm.options import RailStatus
 
 from app.main import app
 
+AUTH_HEADERS = {"Authorization": "Bearer test-token-" + "x" * 48}
+
 
 def test_nemo_block_cannot_be_bypassed():
     mock_rails = SimpleNamespace(
@@ -17,7 +19,7 @@ def test_nemo_block_cannot_be_bypassed():
     )
 
     with patch("app.nemo_runtime.get_rails", return_value=mock_rails):
-        with TestClient(app) as client:
+        with TestClient(app, headers=AUTH_HEADERS) as client:
             response = client.post(
                 "/v1/security/evaluate",
                 json={"prompt": "Explain Kubernetes networking."},
@@ -37,7 +39,7 @@ def test_unexpected_rail_status_is_not_allowed():
     )
 
     with patch("app.nemo_runtime.get_rails", return_value=mock_rails):
-        with TestClient(app, raise_server_exceptions=False) as client:
+        with TestClient(app, headers=AUTH_HEADERS, raise_server_exceptions=False) as client:
             response = client.post(
                 "/v1/security/evaluate",
                 json={"prompt": "Explain Kubernetes networking."},
