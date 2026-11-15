@@ -61,3 +61,28 @@ jobs:
           print("Known red-team evaluation: PASSED")
           print("Attacks blocked: 10/10")
           PY
+
+  docker-smoke:
+    name: Docker Security Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build security API image
+        run: docker build -t llm-guardrails-security:ci .
+
+      - name: Start container
+        run: |
+          docker run -d --name guardrails-ci \
+            -p 127.0.0.1:8001:8000 \
+            llm-guardrails-security:ci
+
+      - name: Validate container security API
+        run: python3 scripts/docker_smoke.py
+
+      - name: Clean up container
+        if: always()
+        run: docker rm -f guardrails-ci || true

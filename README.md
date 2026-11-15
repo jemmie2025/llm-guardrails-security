@@ -46,6 +46,7 @@ Results apply to a fixed test corpus, not unseen attacks or downstream LLM behav
 pip install -r requirements.txt
 python -m pytest -q
 python -m evaluation.run_evaluation
+python -m evaluation.compare_results
 ```
 
 **Docker**
