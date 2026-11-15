@@ -60,7 +60,7 @@ NeMo input-rail enforcement is verified through API integration tests.
 
 ## 5. Engineering Characteristics
 
-- Python 3.10
+- Python 3.12
 - NeMo Guardrails 0.24.1
 - FastAPI application interface
 - Pytest regression validation

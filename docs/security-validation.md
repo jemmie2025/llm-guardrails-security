@@ -51,7 +51,7 @@ blocking checks.
 
 ## 5. Verification
 
-- Pytest: 38 passed; 3 dependency warnings
+- Pytest: 77 passed; 5 CI warnings
 - NeMo runtime: Input-rail enforcement verified
 - Red-team evaluation: 13/13 expected decisions
 - GitHub Actions: Successful

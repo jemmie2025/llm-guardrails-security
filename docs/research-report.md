@@ -60,7 +60,7 @@ Verified evaluation:
 - Hardened detection: 10/10 predefined attacks
 - Observed improvement: +30 percentage points
 - Hardened evaluation: 0/3 benign prompts blocked
-- Automated tests: 38 passed
+- Automated tests: 77 passed
 - GitHub Actions: Successful
 
 These are input-rail classification results, not

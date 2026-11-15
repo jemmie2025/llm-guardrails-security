@@ -14,7 +14,7 @@ flowchart LR
     D --> E{Allow / Block}
 ```
 
-**Stack:** Python 3.10 · NeMo Guardrails · Colang · FastAPI · Pytest · Docker · GitHub Actions
+**Stack:** Python 3.12 · NeMo Guardrails · Colang · FastAPI · Pytest · Docker · GitHub Actions
 
 ## Verified Results
 
@@ -24,8 +24,8 @@ flowchart LR
 | Detection rate | 70% | 100% |
 | False positives | 0/3 | 0/3 |
 
-- **38 automated tests passed**
-- **4/4 containerized API checks passed**
+- **77 automated tests passed**
+- **6/6 Docker smoke tests passed**
 - **GitHub Actions CI passed**
 
 Results apply to a fixed test corpus, not unseen attacks or downstream LLM behavior.
@@ -53,7 +53,8 @@ python -m evaluation.compare_results
 
 ```bash
 docker build -t llm-guardrails-security:1.1 .
-docker run --rm -p 127.0.0.1:8000:8000 llm-guardrails-security:1.1
+export GUARDRAILS_API_TOKEN="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+docker run --rm -e GUARDRAILS_API_TOKEN -p 127.0.0.1:8000:8000 llm-guardrails-security:1.1
 ```
 
 ## Documentation

@@ -57,6 +57,6 @@ security telemetry, and vulnerability scanning.
 
 Initial input-rail detection: 7/10.
 Hardened input-rail detection: 10/10.
-Automated regression suite: 38 passed.
+Automated regression suite: 77 passed.
 
 Results apply only to the evaluated scenarios.
