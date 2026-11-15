@@ -52,7 +52,7 @@ flowchart LR
 | Benign controls incorrectly blocked | **0/3** in both recorded evaluations |
 | Dependency vulnerability audit | **Passed** |
 | Container vulnerability audit | **Passed**; Trivy reported **0 HIGH / 0 CRITICAL** findings at scan time |
-| CI evidence | [Successful GitHub Actions run #18](https://github.com/jemmie2025/llm-guardrails-security/actions/runs/43724913717) |
+| CI evidence | [Successful GitHub Actions run #21](https://github.com/jemmie2025/llm-guardrails-security/actions/runs/43730485761) |
 
 The **+30 percentage-point improvement** compares two implementations on the **same predefined corpus**, not independent accuracy on unseen threats. The recorded *allow-all* reference is separate from the initial 7/10 guardrail implementation.
 
@@ -159,7 +159,7 @@ The expected response contains `"allowed": false` and `"status": "blocked"`. The
 - [Threat model](docs/threat-model.md)
 - [Independent security assessment](docs/final-security-assessment.md)
 - [Recorded red-team evaluation results](evidence/test-results/)
-- [GitHub Actions run #18 — passing checks](https://github.com/jemmie2025/llm-guardrails-security/actions/runs/43724913717)
+- [GitHub Actions run #21 — passing checks](https://github.com/jemmie2025/llm-guardrails-security/actions/runs/43730485761)
 
 ## Project status
 
