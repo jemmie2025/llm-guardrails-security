@@ -32,8 +32,8 @@ Controls:
 
 **Observed improvement:** +30 percentage points.
 
-Baseline: Allow-all input processing.
-Protected configuration: NeMo custom heuristic input rail.
+Initial baseline: Original NeMo heuristic input rail (7/10).
+Hardened configuration: Extended NeMo heuristic input rail (10/10).
 
 The 70% baseline figure represents the initial
 guardrail implementation, not the allow-all baseline.
@@ -51,7 +51,7 @@ blocking checks.
 
 ## 5. Verification
 
-- Pytest: 38 passed; 2 dependency warnings
+- Pytest: 38 passed; 3 dependency warnings
 - NeMo runtime: Input-rail enforcement verified
 - Red-team evaluation: 13/13 expected decisions
 - GitHub Actions: Successful
@@ -66,7 +66,7 @@ CI: https://github.com/jemmie2025/llm-guardrails-security/actions/runs/430994491
 - Zero observed false positives is not a production FPR.
 - No downstream LLM behavior was evaluated.
 - Output filtering and tool authorization remain unverified.
-- FastAPI currently invokes the gateway directly.
+- FastAPI invokes NeMo input rails through app/nemo_runtime.py.
 - NeMo uses the custom heuristic rather than an
   independent model-based safety classifier.
 
