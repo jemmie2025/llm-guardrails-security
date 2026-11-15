@@ -45,5 +45,5 @@ def test_unexpected_rail_status_is_not_allowed():
                 json={"prompt": "Explain Kubernetes networking."},
             )
 
-    assert response.status_code == 500
+    assert response.status_code == 503
     mock_rails.check_async.assert_awaited_once()
