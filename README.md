@@ -151,6 +151,10 @@ The expected response contains `"allowed": false` and `"status": "blocked"`. The
 
 ![Red-Team Before and After](evidence/screenshots/02-red-team-before-after.png)
 
+### Live Qwen Multi-Model Security Validation
+
+![Live Qwen Guardrails Validation](evidence/screenshots/04-live-qwen-guardrails-validation.png)
+
 ## Reports and evidence
 
 - [Research report — NeMo Guardrails, Llama Guard 4, and Rebuff](docs/research-report.md)
