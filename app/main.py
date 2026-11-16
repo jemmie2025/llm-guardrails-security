@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 from app.auth import require_api_token
 from app.body_limit import BodyLimitMiddleware
 from app.nemo_runtime import evaluate_with_nemo
+from app.model_router import configured_models, generate_completion
 from app.rate_limit import enforce_rate_limit, redis_client
 from app.telemetry import (
     REQUESTS,
@@ -40,6 +41,41 @@ class SecurityDecision(BaseModel):
     status: str
     category: str | None
     reason: str
+
+
+
+class ModelPromptRequest(BaseModel):
+    model: str = Field(..., min_length=1, max_length=64)
+    prompt: str = Field(..., max_length=10000)
+    max_tokens: int = Field(default=256, ge=1, le=1024)
+
+
+@app.get("/v1/models", dependencies=[Depends(require_api_token)])
+def list_models():
+    """Expose only approved model aliases, never provider URLs or credentials."""
+    return {"models": sorted(configured_models())}
+
+
+@app.post("/v1/chat/completions", dependencies=[Depends(enforce_rate_limit)])
+async def guarded_chat(request: ModelPromptRequest):
+    """Authorize, screen, and then route an allowed prompt to a configured LLM."""
+    if request.model not in configured_models():
+        raise HTTPException(404, "Unknown model alias")
+    try:
+        timeout = float(os.getenv("GUARDRAILS_EVAL_TIMEOUT_SECONDS", "10"))
+        if not 0.1 <= timeout <= 30:
+            raise ValueError()
+    except ValueError:
+        raise HTTPException(503, "Security configuration unavailable") from None
+    try:
+        security = await asyncio.wait_for(evaluate_with_nemo(request.prompt), timeout)
+    except Exception:
+        raise HTTPException(503, "Security evaluation unavailable") from None
+    if not security["allowed"]:
+        return {"model": request.model, "security": security, "response": None}
+    result = await generate_completion(request.model, request.prompt, request.max_tokens)
+    # Model outputs are returned as-is; output moderation is NOT implemented.
+    return {"model": request.model, "security": security, "response": result}
 
 
 @app.middleware("http")

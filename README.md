@@ -161,6 +161,34 @@ The expected response contains `"allowed": false` and `"status": "blocked"`. The
 - [Recorded red-team evaluation results](evidence/test-results/)
 - [GitHub Actions run #21 — passing checks](https://github.com/jemmie2025/llm-guardrails-security/actions/runs/43730485761)
 
+## Multi-model support (optional)
+
+The authenticated gateway now supports **operator-configured, allowlisted OpenAI-compatible chat-completions providers**, including **local Ollama**, compatible serving stacks such as vLLM/SGLang, and cloud model APIs. The caller selects a **model alias**, never a model URL. All requests pass **API authentication, rate limiting, and NeMo input rails before inference**. Blocked prompts never reach the provider.
+
+Configure a model registry for your own environment (example for Ollama running in WSL):
+
+```bash
+export GUARDRAILS_MODELS_JSON='{"local-llama":{"base_url":"http://127.0.0.1:11434/v1","model":"llama3.2"},"cloud":{"base_url":"https://api.openai.com/v1","model":"gpt-4.1-mini","api_key_env":"OPENAI_API_KEY"}}'
+# Optional only if you actually use the cloud alias:
+# export OPENAI_API_KEY="your-key-from-provider"
+export GUARDRAILS_API_TOKEN="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+In another terminal set the **same** `GUARDRAILS_API_TOKEN` and `GUARDRAILS_MODELS_JSON` for local test commands where relevant:
+
+```bash
+curl -sS http://127.0.0.1:8000/v1/models -H "Authorization: Bearer $GUARDRAILS_API_TOKEN"
+curl -sS http://127.0.0.1:8000/v1/chat/completions \
+  -H "Authorization: Bearer $GUARDRAILS_API_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"local-llama","prompt":"Explain Kubernetes networking.","max_tokens":128}'
+```
+
+Run your Ollama service and pull `llama3.2` separately if you wish to test **actual inference**. The optional cloud model requires its own API key, billing, and network access. **The automated tests mock model providers; they do not prove a live Ollama or cloud inference call.** An unconfigured registry returns an empty model list and refuses model calls. HTTP providers are restricted to loopback in development; production configurations require HTTPS.
+
+**Security boundary:** The endpoint performs **input screening only**; it returns provider output without an output-moderation rail. Neither provider data-handling policies nor production hardening have been independently validated.
+
 ## Project status
 
 **Assignment deliverables completed:** Markdown framework assessment, a working NeMo input-rail integration, and documented before/after results for ten red-team prompts.

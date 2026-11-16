@@ -34,6 +34,8 @@ def safe_route(path):
         "/ready",
         "/metrics",
         "/v1/security/evaluate",
+        "/v1/chat/completions",
+        "/v1/models",
     }
     return path if path in allowed else "other"
 
