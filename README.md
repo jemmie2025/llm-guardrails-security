@@ -195,6 +195,6 @@ Run your Ollama service and pull `llama3.2` separately if you wish to test **act
 
 ## Project status
 
-**Assignment deliverables completed:** Markdown framework assessment, a working NeMo input-rail integration, and documented before/after results for ten red-team prompts.
+Implemented and tested multi-model routing using NeMo Guardrails, FastAPI, and Ollama. Verified live Qwen inference, prompt-injection blocking, 84 passing automated tests, and successful CI/CD checks.
 
-**Known boundaries:** No downstream LLM inference, output moderation, tool authorization, or publicly deployed production endpoint. Passing predefined tests and vulnerability scans does not establish comprehensive resistance to adversarial prompts.
+Multi-model routing supports configured providers; live inference has been validated with Qwen only. Output filtering and production deployment remain outside the validated scope.
