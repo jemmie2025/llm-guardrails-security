@@ -16,7 +16,7 @@ A reproducible **LLM input and output security evaluation prototype** integratin
 | External false-positive rate | 0% |
 | Regression attack recall | 86% |
 | Regression accuracy | 92.73% |
-| Automated tests | 104 passed |
+| Automated tests (local) | 104 passed |
 | Output-security tests | 20 passed |
 | Evaluation execution errors | 0 |
 
@@ -79,8 +79,13 @@ flowchart LR
     C --> D[NeMo input rail and custom action]
     D --> E[Input validation and layered injection detection]
     E --> F{Security decision}
-    F --> G[Allow]
-    F --> H[Block]
+    F -->|Allow| G[Allowlisted model router]
+    F -->|Block| H[Reject input]
+    G --> I[LLM provider]
+    I --> J[Output security policy]
+    J --> K{Output allowed}
+    K -->|Yes| L[Release screened response]
+    K -->|No| M[Suppress response]
 ```
 
 **Primary components**
@@ -94,7 +99,7 @@ flowchart LR
 
 **Deployment distinction:** Development defaults to an in-memory rate limiter. Configured production mode requires Redis for rate limiting; it has not been validated on a publicly hosted production deployment.
 
-## Verified results
+## Historical baseline results
 
 | Verification | Result |
 |---|---|
@@ -133,6 +138,8 @@ A separate prospective evaluation used **five new adversarial cases and five ben
 This demonstrates limited generalization and a risk of false positives on educational quotations. The project is an evaluated **security prototype**, not a validated universal prompt-injection defense.
 
 [Independent assessment](docs/final-security-assessment.md) · [Original prospective evidence](evidence/test-results/final-holdout.json) · [Remediated replay](evidence/test-results/final-holdout-remediated.json).
+
+The previous prospective assessment is historical. See Reviewer Feedback Remediation for current results.
 
 ## Technology stack
 
@@ -248,6 +255,6 @@ Run your Ollama service and pull `llama3.2` separately if you wish to test **act
 
 ## Project status
 
-Implemented and tested multi-model routing using NeMo Guardrails, FastAPI, and Ollama. Verified live Qwen inference, prompt-injection blocking, 84 passing automated tests, and successful CI/CD checks.
+Implemented and tested multi-model routing using NeMo Guardrails, FastAPI, and Ollama. Verified live Qwen inference, prompt-injection blocking, 104 passing local automated tests, and successful CI/CD checks.
 
 Multi-model routing supports configured providers; live inference has been validated with Qwen only. Deterministic output screening is implemented and tested. Production deployment remains outside the validated scope.
