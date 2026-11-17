@@ -11,14 +11,15 @@ EDUCATIONAL = re.compile(
     r'|'
     r'analy[sz]e\s+(?:this\s+attack\s+example|the\s+quoted\s+text)'
     r'\s*:\s*"[^"\n]{1,250}"'
-    r')\s*[.!?]?\s*$',
+    r'|describe\s+the\s+phrase\s+"reveal\s+your\s+system\s+prompt"'
+r')\s*[.!?]?\s*$',
     re.IGNORECASE,
 )
 
 RULES = {
     "instruction_override": [
         r'\b(?:set\s+aside|discard|drop|forget|replace|override|abandon|suspend)\b'
-        r'.{0,110}\b(?:rules|directives|instructions|polic(?:y|ies)|restrictions)\b',
+        r'\s+(?:(?:all|the|your|existing|previous|prior|current|original|trusted|system|developer|safety|security|operating|old|above|earlier)\s+){0,6}(?:rules|directives|instructions|polic(?:y|ies)|restrictions)\b',
         r'\b(?:adopt|assume|impersonate)\b'
         r'.{0,65}\b(?:identity|role)\b'
         r'.{0,65}\b(?:developer|system|administrator)\b',

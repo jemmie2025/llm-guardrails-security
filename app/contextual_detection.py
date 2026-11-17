@@ -31,7 +31,7 @@ def detect_contextual_injection(prompt: str) -> dict:
 
     rules = {
         "instruction_override": [
-            r'\b(?:drop|discard|replace|override)\b.{0,70}'
+            r'\b(?:drop|discard|replace|override)\b\s+(?:(?:all|the|your|existing|previous|prior|current|original|trusted|system|developer|safety|security|operating|old|above|earlier)\s+){0,6}'
             r'\b(?:rules|directives|instructions|policy)\b',
 
             r'\b(?:assume|adopt)\b.{0,60}'
