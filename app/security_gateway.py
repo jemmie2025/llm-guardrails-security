@@ -1,6 +1,7 @@
 """Layered security gateway with NeMo-compatible decisions."""
 
 from app.security import validate_prompt
+from app.semantic_intent import detect_semantic_intent
 from app.injection_detector import detect_injection
 from app.advanced_detection import detect_advanced_injection
 from app.contextual_detection import detect_contextual_injection
@@ -26,6 +27,7 @@ def evaluate_prompt(prompt: str) -> dict:
         detect_advanced_injection,
         detect_contextual_injection,
         detect_intent,
+        detect_semantic_intent,
     )
 
     for detector in detectors:
