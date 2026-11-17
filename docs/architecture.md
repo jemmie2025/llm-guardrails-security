@@ -1,89 +1,73 @@
 # LLM Guardrails Security Architecture
 
-## 1. Architecture Overview
+## Request and Response Flow
 
-The prototype provides a FastAPI-based security evaluation
-interface and a separately verified NeMo input-rail runtime.
+    Client
+      |
+    FastAPI Gateway
+      |
+    Authentication and Rate Limiting
+      |
+    NeMo Input Rail
+      |
+    Layered Python Security Gateway
+      |
+    Input Decision
+      |-- Block -> Reject Request
+      |
+      Allow
+      |
+    Allowlisted Model Router
+      |
+    Configured LLM Provider
+      |
+    Output Security Policy
+      |
+    Output Decision
+      |-- Block -> Suppress Response
+      |
+      Allow -> Release Screened Response
 
-## 2. Implemented Request Path
-
-Client
-  |
-  v
-FastAPI /v1/security/evaluate
-  |
-  v
-Input Validation
-  |
-  v
-Basic Injection Detection
-  |
-  v
-Advanced Injection Detection
-  |
-  v
-Allow / Block Decision
-
-## 3. NeMo Runtime Integration
-
-NeMo LLMRails
-  |
-  v
-Colang Input Rail
-  |
-  v
-check_prompt_security Action
-  |
-  v
-Python Security Gateway
-  |
-  v
-RailStatus.PASSED / RailStatus.BLOCKED
-
-FastAPI invokes LLMRails.check_async() for security evaluation.
-NeMo input-rail enforcement is verified through API integration tests.
-
-## 4. Core Components
+## Core Components
 
 | Component | Responsibility |
 |---|---|
-| app/main.py | HTTP interface |
+| app/main.py | API and enforcement orchestration |
 | app/security.py | Input validation |
-| app/injection_detector.py | Basic signature detection |
-| app/advanced_detection.py | Additional attack detection |
-| app/security_gateway.py | Security decision orchestration |
-| guardrails/actions.py | NeMo action integration |
-| guardrails/config/ | Colang and YAML policies |
-| evaluation/ | Adversarial evaluation |
-| tests/ | Regression and integration tests |
-| .github/workflows/ | CI automation |
+| app/nemo_runtime.py | NeMo runtime |
+| app/security_gateway.py | Layered input screening |
+| app/semantic_intent.py | Context-sensitive heuristic detection |
+| app/model_router.py | Allowlisted provider routing |
+| app/output_security.py | Output validation and credential screening |
+| app/auth.py | API authentication |
+| app/rate_limit.py | Request rate limiting |
+| app/telemetry.py | Operational observability |
+| guardrails/ | NeMo policies and custom actions |
+| evaluation/ | Reproducible security benchmarks |
+| tests/ | Automated security regression tests |
 
-## 5. Engineering Characteristics
+## Security Boundaries
 
-- Python 3.12
-- NeMo Guardrails 0.24.1
-- FastAPI application interface
-- Pytest regression validation
-- GitHub Actions CI
-- Docker packaging configuration
+- Input screening precedes provider inference.
+- Output screening precedes response release.
+- Blocked prompts do not reach the provider.
+- Rejected provider output is suppressed.
+- Moderation exceptions fail closed.
+- Callers select configured aliases, not arbitrary URLs.
 
-## 6. Verified Boundaries
+## Experimental Research
 
-Verified:
-- Input validation
-- Heuristic injection classification
-- NeMo input-rail execution
-- Automated regression checks
-- Red-team evaluation
-- GitHub Actions execution
+The revision-pinned DeBERTa classifier remains isolated
+from the application runtime due to insufficient detection
+quality and significant CPU inference overhead.
 
-Not yet verified:
-- End-to-end LLM inference
-- Model-output filtering
-- External tool authorization
+## Deployment Limitations
 
-## 7. Security Considerations
+The application remains a functional security prototype.
 
-The implementation is a controlled security prototype.
-Passing known test cases does not establish resistance
-to unseen adversarial techniques or production readiness.
+External attack detection requires further improvement.
+Deterministic output screening is not comprehensive
+semantic content moderation.
+
+See the Final Security Assessment for measured results,
+latency benchmarks and residual security risks.

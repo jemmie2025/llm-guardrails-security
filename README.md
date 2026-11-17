@@ -2,9 +2,62 @@
 
 **NeMo Guardrails · Prompt Injection Defense · FastAPI · Docker · DevSecOps**
 
-A reproducible **LLM input-security evaluation prototype** integrating NVIDIA NeMo Guardrails with layered Python prompt-injection detection and an authenticated FastAPI service. The project compares safety frameworks, implements a working input rail, and records before/after behavior on ten red-team scenarios.
+A reproducible **LLM input and output security evaluation prototype** integrating NVIDIA NeMo Guardrails with layered Python prompt-injection detection and an authenticated FastAPI service. The project compares safety frameworks, implements a working input rail, and records before/after behavior on ten red-team scenarios.
 
-> **Scope:** The API returns an *allow* or *block* decision for submitted prompts. It does not perform downstream LLM inference, filter generated responses, or guarantee resistance to novel jailbreaks.
+> **Scope:** The API supports input screening, configured model inference and deterministic output-security enforcement. Resistance to novel jailbreaks is not guaranteed.
+
+## Reviewer Feedback Remediation
+
+### Security Quality
+
+| Metric | Result |
+|---|---:|
+| External benign prompts | 100 |
+| External false-positive rate | 0% |
+| Regression attack recall | 86% |
+| Regression accuracy | 92.73% |
+| Automated tests | 104 passed |
+| Output-security tests | 20 passed |
+| Evaluation execution errors | 0 |
+
+### Guardrail Latency
+
+All values are milliseconds.
+
+| Decision Path | p50 | p95 | p99 |
+|---|---:|---:|---:|
+| Input allow | 9.4136 | 11.7954 | 15.1364 |
+| Input block | 11.5044 | 14.3940 | 17.3642 |
+| Output allow | 0.0064 | 0.0072 | 0.0135 |
+| Output block | 0.0056 | 0.0062 | 0.0087 |
+
+Measured across 2,100 sequential evaluations.
+Provider inference and HTTP overhead are excluded.
+
+### Output Security
+
+- Credential and private-key leakage screening.
+- Protected environment-secret detection.
+- Empty, malformed and oversized output rejection.
+- Fail-closed moderation enforcement.
+- Consistent screening across configured model aliases.
+
+### Security Acceptance and Limitations
+
+The external benign false-positive threshold was met.
+
+However, external attack recall was only 1%.
+The overall security acceptance gate failed.
+
+An experimental DeBERTa classifier was evaluated but
+not integrated due to insufficient detection quality
+and significant CPU overhead.
+
+The application remains a security prototype and is
+not approved for production deployment.
+
+See the [Final Security Assessment](docs/final-security-assessment.md)
+for complete results, methodology and residual risks.
 
 ## Assignment deliverables
 
@@ -15,7 +68,7 @@ A reproducible **LLM input-security evaluation prototype** integrating NVIDIA Ne
 | Working integration of one guardrail in a sample application | NeMo input rails and a custom Python action, enforced through FastAPI |
 | Before/after behavior for 5–10 red-team prompts | Ten adversarial scenarios, plus three benign controls, with [recorded results](evidence/test-results/) |
 
-**Framework selection:** NeMo Guardrails **0.24.1** was implemented for configurable policy enforcement and Python integration. **Llama Guard 4** and **Rebuff** were researched but **not integrated**. Output filtering is discussed in the technical report; this sample app implements **input filtering only**.
+**Framework selection:** NeMo Guardrails **0.24.1** was implemented for configurable policy enforcement and Python integration. **Llama Guard 4** and **Rebuff** were researched but **not integrated**. The application implements input filtering and deterministic output-security screening.
 
 ## Architecture
 
@@ -191,10 +244,10 @@ curl -sS http://127.0.0.1:8000/v1/chat/completions \
 
 Run your Ollama service and pull `llama3.2` separately if you wish to test **actual inference**. The optional cloud model requires its own API key, billing, and network access. **The automated tests mock model providers; they do not prove a live Ollama or cloud inference call.** An unconfigured registry returns an empty model list and refuses model calls. HTTP providers are restricted to loopback in development; production configurations require HTTPS.
 
-**Security boundary:** The endpoint performs **input screening only**; it returns provider output without an output-moderation rail. Neither provider data-handling policies nor production hardening have been independently validated.
+**Security boundary:** The endpoint enforces input screening and deterministic output moderation before releasing provider responses. Neither provider data-handling policies nor production hardening have been independently validated.
 
 ## Project status
 
 Implemented and tested multi-model routing using NeMo Guardrails, FastAPI, and Ollama. Verified live Qwen inference, prompt-injection blocking, 84 passing automated tests, and successful CI/CD checks.
 
-Multi-model routing supports configured providers; live inference has been validated with Qwen only. Output filtering and production deployment remain outside the validated scope.
+Multi-model routing supports configured providers; live inference has been validated with Qwen only. Deterministic output screening is implemented and tested. Production deployment remains outside the validated scope.
