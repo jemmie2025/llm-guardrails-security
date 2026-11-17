@@ -1,0 +1,6 @@
+{
+  "model_id": "protectai/deberta-v3-base-prompt-injection-v2",
+  "revision": "90c9989b1a342275dd0d1a95aad283c04e075671",
+  "device": "cpu",
+  "weights_format": "safetensors"
+}
