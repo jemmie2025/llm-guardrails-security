@@ -1,0 +1,9 @@
+External dataset: deepset/prompt-injections
+Source: https://huggingface.co/datasets/deepset/prompt-injections
+Source splits: train, test
+Source snapshot SHA256: b55f2b164ebedb0535f2aab769ac9affd774a19dd1c47b42a3f441c436da7b1a
+Sampling seed: 42
+Selection: random sampling without replacement
+Excluded: empty, oversized and duplicate prompts
+Labels: original external dataset labels
+No selection based on detector performance
