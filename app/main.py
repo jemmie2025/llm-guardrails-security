@@ -10,6 +10,7 @@ from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import BaseModel, Field
 
 from app.auth import require_api_token
+from app.output_security import screen_output
 from app.body_limit import BodyLimitMiddleware
 from app.nemo_runtime import evaluate_with_nemo
 from app.model_router import configured_models, generate_completion
@@ -74,8 +75,34 @@ async def guarded_chat(request: ModelPromptRequest):
     if not security["allowed"]:
         return {"model": request.model, "security": security, "response": None}
     result = await generate_completion(request.model, request.prompt, request.max_tokens)
-    # Model outputs are returned as-is; output moderation is NOT implemented.
-    return {"model": request.model, "security": security, "response": result}
+    try:
+        output_security = screen_output(result)
+        if not isinstance(output_security["allowed"], bool):
+            raise ValueError("Invalid moderation decision")
+    except Exception:
+        log_event("output_security_failure")
+        raise HTTPException(
+            503, "Output security unavailable"
+        ) from None
+
+    if not output_security["allowed"]:
+        log_event(
+            "output_blocked",
+            category=output_security["category"],
+        )
+        return {
+            "model": request.model,
+            "security": security,
+            "output_security": output_security,
+            "response": None,
+        }
+
+    return {
+        "model": request.model,
+        "security": security,
+        "output_security": output_security,
+        "response": result,
+    }
 
 
 @app.middleware("http")
